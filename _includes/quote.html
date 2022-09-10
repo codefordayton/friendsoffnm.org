@@ -1,0 +1,4 @@
+ {% assign hours= site.time | date: "%H" | plus:100 %}
+ {% assign random = page.title.size | plus: hours | modulo: site.data.quotes.size %}
+ <p><em>{{ site.data.quotes[random] }}</em></p>
+ <p>- Florence Nightingale</p>

@@ -1,0 +1,23 @@
+---
+title: Friends of Florence Nightingale Museum
+timezone: UTC
+markdown: kramdown
+email: team@codefordayton.org
+description:
+  'Friends of Florence Nightingale Museum'
+baseurl: ''
+url: https://www.friendsoffnm.org
+author: Janet Michaelis
+defaults:
+  - scope:
+      type: posts
+    values:
+      layout: post
+# NOTE:If you change the below donate_url you should also update the URL here: https://github.com/codefordayton/.github/FUNDING.yml
+donate_url: https://codeforamerica.org/donate-to-a-brigade?utm_campaign=Code%20for%20Dayton&utm_source=codefordayton.org
+twitter_url: https://twitter.com/codefordayton
+facebook_url: https://www.facebook.com/Code-For-Dayton-1501498193512256
+
+plugins:
+  - jekyll-redirect-from
+  - jekyll-feed
