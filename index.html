@@ -38,3 +38,46 @@ The <a href="https://www.florence-nightingale.co.uk/">Florence Nightingale Museu
     <figcaption class="friends-caption" aria-hidden="true">Nurse Rosa Hart at Nurses Day</figcaption>
   </figure>
 </section>
+<script> // A small script to toggle captions on click and handle keyboard activation.
+//
+// Add this file at assets/js/friends-captions.js and include it in the layout
+// (or paste the contents into an inline <script> at the bottom of index.html).
+document.addEventListener('DOMContentLoaded', function () {
+  // Toggle a given figure's caption state
+  function toggleFigureCaption(fig) {
+    var isVisible = fig.classList.toggle('caption-visible');
+    fig.setAttribute('aria-expanded', isVisible ? 'true' : 'false');
+    var caption = fig.querySelector('.friends-caption');
+    if (caption) caption.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+  }
+
+  // Click handler (works for touch and mouse)
+  document.addEventListener('click', function (ev) {
+    var fig = ev.target.closest('.friends-figure');
+    if (!fig) return;
+    toggleFigureCaption(fig);
+  });
+
+  // Keyboard: activate with Enter or Space when figure is focused
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    var active = document.activeElement;
+    if (!active || !active.classList || !active.classList.contains('friends-figure')) return;
+    ev.preventDefault();
+    toggleFigureCaption(active);
+  });
+
+  // Optional: clicking outside any figure closes all captions.
+  // Uncomment the following if you want that behavior:
+  /*
+  document.addEventListener('click', function (ev) {
+    if (ev.target.closest('.friends-figure')) return; // click was on a figure
+    document.querySelectorAll('.friends-figure.caption-visible').forEach(function (f) {
+      f.classList.remove('caption-visible');
+      f.setAttribute('aria-expanded', 'false');
+      var c = f.querySelector('.friends-caption');
+      if (c) c.setAttribute('aria-hidden', 'true');
+    });
+  }, true);
+  */
+});</script>
