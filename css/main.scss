@@ -320,3 +320,47 @@ img.centered {
 .friends-figure:focus {
   box-shadow: 0 0 0 3px rgba(30,115,190,0.2);
 } 
+/* add/append to your main stylesheet */
+.friends-figure {
+  position: relative;
+  display: inline-block; /* allows the figure to size to the thumbnail */
+  cursor: pointer;       /* indicates it is interactive */
+  outline: none;         /* keyboard focus will be styled separately if desired */
+}
+
+/* the thumbnail sizing you already have */
+.friends-photo {
+  max-height: 144px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* hidden-by-default caption */
+.friends-caption {
+  display: none;
+  position: absolute;
+  left: 0.25rem;
+  right: 0.25rem;
+  bottom: 0.25rem;
+  background: rgba(0, 0, 0, 0.7); /* readable overlay */
+  color: #fff;
+  font-size: 0.75rem; /* small but readable; adjust if needed */
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  line-height: 1.2;
+  text-align: center;
+  pointer-events: none; /* so clicks target the figure, not the caption */
+}
+
+/* shown when figure has the toggle class */
+.friends-figure.caption-visible .friends-caption {
+  display: block;
+  pointer-events: auto;
+}
+
+/* visible focus style for keyboard users */
+.friends-figure:focus {
+  box-shadow: 0 0 0 3px rgba(30,115,190,0.2);
+}
