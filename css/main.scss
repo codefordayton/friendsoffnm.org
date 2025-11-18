@@ -266,7 +266,12 @@ img.centered {
     grid-column: span 2;
   }
 }
-
-/*** IMPORT PARTIALS FROM 'SASS_DIR' (defaults to '_sass') ***/
+.friends-photo {
+  max-height: 144px;   /* controls on-screen height */
+  width: auto;         /* preserves aspect ratio */
+  max-width: 100%;     /* prevents overflow on small screens */
+  display: block;
+  margin-top: 0.5rem;
+}/*** IMPORT PARTIALS FROM 'SASS_DIR' (defaults to '_sass') ***/
 @import 'base', 'buttons', 'lists', 'forms', 'page-link-nav', 'components',
   'hackathon', 'syntax-highlighting', 'newsletter';
