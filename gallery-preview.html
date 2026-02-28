@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gallery Preview — Friends of Florence Nightingale Museum</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 18px; background: #fff; color: #111; padding-bottom: 3rem; }
+a { color: #65b3e0; font-weight: bold; text-decoration: none; }
+a:hover { color: #4883a5; }
+
+/* Site header (simplified) */
+.site-header {
+  border-top: 5px solid #291443;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+}
+.site-header .logo img { height: 5rem; }
+.site-nav a {
+  margin-left: 1.5rem;
+  color: #291443;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+.btn-primary {
+  background: #291443;
+  color: #fff !important;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Gallery hero */
+.gallery-hero {
+  background: linear-gradient(135deg, #291443 0%, #4a2278 60%, #1a2a5e 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 1.5rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 120%, rgba(101,179,224,0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.gallery-hero-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.gallery-hero-title {
+  font-family: 'Merriweather', serif;
+  font-size: 2.4rem;
+  margin: 0 0 0.75rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.gallery-hero-sub { font-size: 1.1rem; margin: 0 0 1rem; opacity: 0.88; line-height: 1.6; }
+.gallery-hero-lamp {
+  font-size: 2.5rem;
+  margin-top: 0.5rem;
+  display: block;
+  animation: lamp-glow 3s ease-in-out infinite;
+}
+@keyframes lamp-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,220,120,0.6)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 18px rgba(255,220,120,1));  transform: scale(1.08); }
+}
+
+/* Timeline */
+.timeline-wrap {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 3rem 3.5rem;
+}
+.timeline-line {
+  position: absolute;
+  left: 1.75rem;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, #291443, #65b3e0 80%, transparent);
+}
+.timeline-event {
+  position: relative;
+  margin-bottom: 3rem;
+  opacity: 1; /* show all in preview */
+}
+.timeline-dot {
+  position: absolute;
+  left: -2.55rem;
+  top: 0.45rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: #291443;
+  border: 3px solid #65b3e0;
+  box-shadow: 0 0 0 4px rgba(101,179,224,0.2);
+  transition: box-shadow 0.2s;
+}
+.timeline-event:hover .timeline-dot {
+  box-shadow: 0 0 0 6px rgba(101,179,224,0.35);
+}
+.timeline-body { padding-left: 0.25rem; }
+.timeline-date-badge {
+  display: inline-block;
+  background: #291443;
+  color: #fff;
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.03em;
+}
+.timeline-body > p { margin: 0.4rem 0 0.75rem; line-height: 1.65; }
+
+/* Photo strip */
+.photo-strip { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.75rem; }
+.gallery-thumb {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(41,20,67,0.2);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  outline: none;
+}
+.gallery-thumb:hover, .gallery-thumb:focus {
+  transform: scale(1.06);
+  box-shadow: 0 8px 24px rgba(41,20,67,0.45);
+}
+.gallery-thumb:focus { outline: 3px solid #65b3e0; outline-offset: 2px; }
+.gallery-thumb img { height: 150px; width: auto; max-width: 220px; object-fit: cover; display: block; }
+.gallery-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(41,20,67,0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.22s ease;
+}
+.thumb-zoom-icon {
+  color: #fff;
+  font-size: 1.8rem;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.gallery-thumb:hover .gallery-thumb-overlay,
+.gallery-thumb:focus .gallery-thumb-overlay {
+  background: rgba(41,20,67,0.5);
+}
+.gallery-thumb:hover .thumb-zoom-icon,
+.gallery-thumb:focus .thumb-zoom-icon {
+  opacity: 1;
+}
+
+/* Lightbox */
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.gallery-lightbox.is-open { opacity: 1; pointer-events: all; }
+.gallery-lightbox-backdrop { position: absolute; inset: 0; background: rgba(10,4,20,0.93); cursor: pointer; }
+.gallery-lightbox-dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 92vw;
+  max-height: 95vh;
+}
+.gallery-lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  padding: 0;
+}
+.gallery-lightbox-close:hover, .gallery-lightbox-close:focus {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.7);
+  outline: none;
+}
+.gallery-lightbox-img-wrap img {
+  max-width: 88vw;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.7);
+  display: block;
+}
+.gallery-lightbox-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+.gallery-lightbox-prev, .gallery-lightbox-next {
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-size: 2.2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.gallery-lightbox-prev:hover, .gallery-lightbox-prev:focus,
+.gallery-lightbox-next:hover, .gallery-lightbox-next:focus {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.8);
+  outline: none;
+}
+.gallery-lightbox-meta { text-align: center; min-width: 0; flex: 1; }
+.gallery-lightbox-caption { color: #fff; font-size: 0.95rem; margin: 0 0 0.2rem; line-height: 1.4; }
+.gallery-lightbox-counter { color: rgba(255,255,255,0.55); font-size: 0.8rem; display: block; }
+
+/* Placeholder boxes for images that may not load */
+.gallery-thumb img { background: #e8e0f0; }
+
+/* Footer */
+.site-footer { border-top: 5px solid #65b3e0; background: #e8e8e8; padding: 20px; text-align: center; margin-top: 3rem; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<!-- Simplified header -->
+<header class="site-header">
+  <div class="logo">
+    <img src="img/logo/FoFNMlogo.jpg" alt="Friends of Florence Nightingale Museum" onerror="this.style.display='none'" />
+  </div>
+  <nav class="site-nav">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#" style="color:#291443">Gallery</a>
+    <a href="#">Contact</a>
+    <a href="#" class="btn-primary">Become a Member</a>
+  </nav>
+</header>
+
+<div class="gallery-page">
+
+  <div class="gallery-hero">
+    <div class="gallery-hero-inner">
+      <h1 class="gallery-hero-title">Our Story in Photos</h1>
+      <p class="gallery-hero-sub">A visual journey through nursing history, friendship, and advocacy &mdash; from Dayton, Ohio to London, England and beyond.</p>
+      <div class="gallery-hero-lamp" aria-hidden="true">&#128337;</div>
+    </div>
+  </div>
+
+  <div class="timeline-wrap">
+    <div class="timeline-line" aria-hidden="true"></div>
+
+    <!-- November 2025 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2025-11">November 2025</time></span>
+        <p>Attending opening of the new exhibit <a href="#">&ldquo;Healing Spaces: Healthcare Design Past, Present and Future&rdquo;</a>, funded by donations from American Friends.</p>
+      </div>
+    </div>
+
+    <!-- May 2025 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2025-05">May 2025</time></span>
+        <p>Reprised last year&rsquo;s Nurses Day event with &ldquo;Tacos and a Talk, Take 2&rdquo; which included a historical uniform display. Featured speaker was consultant &amp; podcaster <a href="#">Nurse Rosa Hart</a>.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/nurse-week2025-rosa-terri-small.jpg" data-caption="Nurse Rosa Hart at Nurses Day">
+            <img src="img/nurse-week2025-rosa-terri-small.jpg" alt="Nurse Rosa Hart at Nurses Day" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- April 2025 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2025-04">April 2025</time></span>
+        <p>Completed production of Friends of FNM&rsquo;s interactive online <a href="#">Virtual Tour Of Lea Hurst</a>. We previewed the tour at the Nightingale Museum booth during the <a href="#">AONL</a> conference in Boston, Massachusetts.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/aonl-laura-lea-hurst-tour-kiosk-small.jpg" data-caption="Virtual tour kiosk at AONL conference">
+            <img src="img/aonl-laura-lea-hurst-tour-kiosk-small.jpg" alt="Virtual tour kiosk at AONL conference" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/aonl-betty-laura-janet-terri-smalli.jpg" data-caption="Betty Long and colleagues at the AONL booth">
+            <img src="img/aonl-betty-laura-janet-terri-smalli.jpg" alt="Betty Long and colleagues at the AONL booth" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- November 2024 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2024-11">November 2024</time></span>
+        <p>Attended performance of Nurse Blake&rsquo;s &ldquo;Shock Advised!&rdquo; tour. Blake combines his &ldquo;passion for nursing and comedy to create a positive disruption in the nursing space.&rdquo;</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/nurse-blake-donna-janet-small.jpg" data-caption="Nurse Blake with Donna and Janet at the performance">
+            <img src="img/nurse-blake-donna-janet-small.jpg" alt="Nurse Blake with Donna and Janet" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/nurse-blake-foffnm-jacket-small.jpg" data-caption="Nurse Blake with Friends of FNM jacket">
+            <img src="img/nurse-blake-foffnm-jacket-small.jpg" alt="Nurse Blake with Friends of FNM jacket" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- May 2024 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2024-05">May 2024</time></span>
+        <p>Organized second annual Nurses Day event &ldquo;Tacos and a Talk.&rdquo; Featured speaker was renowned Nightingale scholar and author, <a href="#">Lynn McDonald</a>.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/lynn-mcdonald-florence-small.jpg" data-caption="Lynn McDonald at the Florence Nightingale Museum">
+            <img src="img/lynn-mcdonald-florence-small.jpg" alt="Lynn McDonald at the Florence Nightingale Museum" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/lynn-mcdonald-speaker-small.jpg" data-caption="Lynn McDonald speaking at Nurses Day">
+            <img src="img/lynn-mcdonald-speaker-small.jpg" alt="Lynn McDonald speaking" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- January 2024 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2024-01">January 2024</time></span>
+        <p>New permanent exhibit <a href="#">British Military Nursing in Peace and War</a> opens. The Friends contributed a <a href="#">video interview with Col Dan Kirkpatrick &ndash; US Air Force Nurse</a>.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/fnm-military-exhibit.jpg" data-caption="British Military Nursing in Peace and War exhibit">
+            <img src="img/fnm-military-exhibit.jpg" alt="Military Nursing exhibit" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/kirkpatrick-headshot.jpg" data-caption="Col Dan Kirkpatrick, US Air Force Nurse">
+            <img src="img/kirkpatrick-headshot.jpg" alt="Col Dan Kirkpatrick" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- September 2023 – Pilgrimage -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2023-09">September 2023</time></span>
+        <p>Led by Dr. Donna Curry, a group of American nurses visited Nightingale-related locations around England including <a href="#">Nightingale&rsquo;s grave</a> and two nights at her childhood home, <a href="#">Lea Hurst</a>.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/friends-pilgrimage-lamp.jpg" data-caption="Pilgrimage group at the Nightingale lamp display">
+            <img src="img/friends-pilgrimage-lamp.jpg" alt="Pilgrimage group at lamp display" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/friends-pilgrimage-grave.jpg" data-caption="Florence Nightingale's grave, East Wellow">
+            <img src="img/friends-pilgrimage-grave.jpg" alt="Florence Nightingale's grave" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- September 2023 – AAHN -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2023-09">September 2023</time></span>
+        <p>Museum display at the <a href="#">American Association of the History of Nursing</a> Conference, Pittsburgh, Pennsylvania.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/aahn-booth-donna-athena.jpg" data-caption="Friends of FNM booth at the AAHN conference">
+            <img src="img/aahn-booth-donna-athena.jpg" alt="AAHN conference booth" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- June 2023 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2023-06">June 2023</time></span>
+        <p>Successful GoFundMe campaign to ship Nightingale&rsquo;s wheelchair from Johns Hopkins University to the Florence Nightingale Museum in London.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/fnm-wheelchair-donation.jpg" data-caption="Wheelchair being prepared for donation">
+            <img src="img/fnm-wheelchair-donation.jpg" alt="Wheelchair donation" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/fnm-wheelchair-inmuseum.jpg" data-caption="Nightingale's wheelchair on display at the Museum">
+            <img src="img/fnm-wheelchair-inmuseum.jpg" alt="Wheelchair in museum" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- May 2023 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2023-05">May 2023</time></span>
+        <p>Organized &amp; sponsored Nurses Day picnic, &ldquo;Nurses Lunch Break,&rdquo; in Dayton, Ohio. Dr. Donna Miles Curry appeared in Nightingale dress to deliver the keynote address.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/lunch-break2023-donna-on-stage.jpg" data-caption="Dr. Donna Miles Curry on stage at Nurses Lunch Break">
+            <img src="img/lunch-break2023-donna-on-stage.jpg" alt="Dr. Curry on stage" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/lunch-break2023-flo-donna-small.jpg" data-caption="Dr. Donna Miles Curry in Nightingale dress">
+            <img src="img/lunch-break2023-flo-donna-small.jpg" alt="Dr. Curry in Nightingale dress" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- December 2022 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2022-12">December 2022</time></span>
+        <p>Museum display at the Wright State University School of Nursing Graduation.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/donna-wsu-fofnm-small.jpg" data-caption="Dr. Donna Curry at Wright State University graduation">
+            <img src="img/donna-wsu-fofnm-small.jpg" alt="Dr. Curry at WSU graduation" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- May 2022 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2022-05">May 2022</time></span>
+        <p>Florence Nightingale Museum in London officially reopens after long closure for Covid. Friends founder Dr. Curry presents donation check to Director David Green.</p>
+        <div class="photo-strip">
+          <figure class="gallery-thumb" data-src="img/2022DonnaEileenDavidPhillipsmall.jpg" data-caption="Dr. Curry presenting donation check to Director David Green">
+            <img src="img/2022DonnaEileenDavidPhillipsmall.jpg" alt="Donation check presentation" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/@022ReopeningSignsmall.jpg" data-caption="Museum reopening sign">
+            <img src="img/@022ReopeningSignsmall.jpg" alt="Museum reopening sign" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+          <figure class="gallery-thumb" data-src="img/Donation- FOFNMJan2022small.jpg" data-caption="Friends of FNM donation check">
+            <img src="img/Donation- FOFNMJan2022small.jpg" alt="Donation check" />
+            <div class="gallery-thumb-overlay" aria-hidden="true"><span class="thumb-zoom-icon">&#10010;</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- March 2022 -->
+    <div class="timeline-event">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-body">
+        <span class="timeline-date-badge"><time datetime="2022-03">March 2022</time></span>
+        <p>Registered the &ldquo;Friends of the Florence Nightingale Museum&rdquo; as a 501(c)3 nonprofit business in Ohio.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="gallery-lightbox" class="gallery-lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="gallery-lightbox-backdrop"></div>
+  <div class="gallery-lightbox-dialog">
+    <button class="gallery-lightbox-close" aria-label="Close">&times;</button>
+    <div class="gallery-lightbox-img-wrap">
+      <img id="gallery-lightbox-img" src="" alt="" />
+    </div>
+    <div class="gallery-lightbox-footer">
+      <button class="gallery-lightbox-prev" aria-label="Previous">&#8249;</button>
+      <div class="gallery-lightbox-meta">
+        <p id="gallery-lightbox-caption" class="gallery-lightbox-caption"></p>
+        <span id="gallery-lightbox-counter" class="gallery-lightbox-counter"></span>
+      </div>
+      <button class="gallery-lightbox-next" aria-label="Next">&#8250;</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>&ldquo;How very little can be done under the spirit of fear.&rdquo; &mdash; Florence Nightingale</p>
+</footer>
+
+<script>
+(function () {
+  var thumbs = Array.from(document.querySelectorAll('.gallery-thumb'));
+  var lightbox = document.getElementById('gallery-lightbox');
+  var lbImg = document.getElementById('gallery-lightbox-img');
+  var lbCaption = document.getElementById('gallery-lightbox-caption');
+  var lbCounter = document.getElementById('gallery-lightbox-counter');
+  var lbPrev = document.querySelector('.gallery-lightbox-prev');
+  var lbNext = document.querySelector('.gallery-lightbox-next');
+  var lbClose = document.querySelector('.gallery-lightbox-close');
+  var lbBackdrop = document.querySelector('.gallery-lightbox-backdrop');
+  var currentIndex = 0;
+
+  function openLightbox(index) {
+    currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    lbClose.focus();
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    thumbs[currentIndex].focus();
+  }
+  function updateLightbox() {
+    var thumb = thumbs[currentIndex];
+    lbImg.src = thumb.dataset.src;
+    lbImg.alt = thumb.dataset.caption;
+    lbCaption.textContent = thumb.dataset.caption;
+    lbCounter.textContent = (currentIndex + 1) + ' of ' + thumbs.length;
+  }
+  function showPrev() { currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length; updateLightbox(); }
+  function showNext() { currentIndex = (currentIndex + 1) % thumbs.length; updateLightbox(); }
+
+  thumbs.forEach(function (thumb, i) {
+    thumb.setAttribute('tabindex', '0');
+    thumb.addEventListener('click', function () { openLightbox(i); });
+    thumb.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
+    });
+  });
+
+  lbPrev.addEventListener('click', showPrev);
+  lbNext.addEventListener('click', showNext);
+  lbClose.addEventListener('click', closeLightbox);
+  lbBackdrop.addEventListener('click', closeLightbox);
+
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') showPrev();
+    if (e.key === 'ArrowRight') showNext();
+  });
+}());
+</script>
+</body>
+</html>
