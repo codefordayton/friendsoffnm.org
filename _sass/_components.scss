@@ -103,6 +103,31 @@
   }
 }
 
+.bio {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .bio-photo {
+    width: 150px;
+    flex-shrink: 0;
+  }
+
+  .bio-text {
+    flex: 1;
+  }
+
+  @include media-query(600px) {
+    flex-direction: column;
+
+    .bio-photo {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+}
+
 .team-grid {
   margin: 0 auto;
   text-align: center;
