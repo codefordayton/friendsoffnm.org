@@ -201,6 +201,17 @@ h6 {
 /**
  * Links
  */
+a {
+  color: #6b71f5;
+
+  &:visited {
+    color: #6b71f5;
+  }
+
+  &:hover {
+    color: darken(#6b71f5, 15%);
+  }
+}
 
 /**
  * Blockquotes
